@@ -1,12 +1,14 @@
 import { useAppDispatch, useAppSelector } from "../app/hooks.ts";
 import {
-  selectFetchLoading,
-  selectTransactions,
+  clearOneTransaction,
+  selectAddLoading,
+  selectFetchLoading, selectOneTransaction,
+  selectTransactions, selectUpdateLoading,
 } from "../store/transaction/transactionSlice.ts";
 import { useEffect, useState } from "react";
 import {
   addTransaction,
-  fetchTransactions,
+  fetchTransactions, updateTransaction,
 } from "../store/transaction/transactionThunks.ts";
 import Spinner from "../UI/Spinner/Spinner.tsx";
 import TransactionItem from "../components/TransactionItem.tsx";
@@ -22,8 +24,13 @@ import TransactionForm from "../components/TransactionForm.tsx";
 const Home = () => {
   const transactions = useAppSelector(selectTransactions);
   const fetchLoading = useAppSelector(selectFetchLoading);
+  const addLoading = useAppSelector(selectAddLoading);
+  const updateLoading = useAppSelector(selectUpdateLoading);
+  const oneTransaction = useAppSelector(selectOneTransaction);
+  const fetchOneLoading = useAppSelector(selectFetchLoading);
 
   const [showModal, setShowModal] = useState(false);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
 
   const categories = useAppSelector(selectCategories);
   const categoryFetchLoading = useAppSelector(selectCategoriesLoading);
@@ -69,17 +76,30 @@ const Home = () => {
   const total = incomeTotal - expenseTotal;
 
   const onShowModal = () => {
+    setTransactionId(null);
     setShowModal(true);
   };
 
   const onCloseModal = () => {
     setShowModal(false);
+    setTransactionId(null);
+    dispatch(clearOneTransaction());
   };
 
   const onSubmitForm = async (newTran: TransactionMutation) => {
-    await dispatch(addTransaction(newTran));
+    if (transactionId) {
+      await dispatch(updateTransaction({ id: transactionId, transaction: newTran }));
+    } else {
+      await dispatch(addTransaction(newTran));
+    }
     await dispatch(fetchTransactions());
     setShowModal(false);
+    dispatch(clearOneTransaction());
+  };
+
+  const onEditTransaction = (id: string) => {
+    setTransactionId(id);
+    setShowModal(true);
   };
 
   return (
@@ -102,6 +122,7 @@ const Home = () => {
                 key={transaction.id}
                 transaction={transaction}
                 categories={categories}
+                onEdit={onEditTransaction}
               />
             ))}
 
@@ -109,8 +130,11 @@ const Home = () => {
               <TransactionForm
                 onSubmitFormToAdd={onSubmitForm}
                 onClose={onCloseModal}
-                isLoading={false}
+                isLoading={addLoading || updateLoading || fetchOneLoading}
                 categories={categories}
+                idTran={transactionId}
+                isEdit={Boolean(transactionId)}
+                oneTransaction={oneTransaction}
               />
             )}
           </>

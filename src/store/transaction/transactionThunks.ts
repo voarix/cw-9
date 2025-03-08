@@ -28,3 +28,27 @@ export const addTransaction = createAsyncThunk<void, TransactionMutation>(
     await axiosApi.post("transactions.json", transaction);
   },
 );
+
+export const fetchOneTransactionById = createAsyncThunk<Transaction, string>(
+  "transactions/fetchOneTransactionById",
+  async (id) => {
+    const response = await axiosApi.get<Transaction | null>(`transactions/${id}.json`);
+    const transaction = response.data;
+
+    if (!transaction) {
+      throw new Error("Transaction not found");
+    }
+
+    return {
+      ...transaction,
+      id,
+    };
+  }
+);
+
+export const updateTransaction = createAsyncThunk<void, { id: string; transaction: TransactionMutation }>(
+  "transactions/updateTransaction",
+  async ({ id, transaction }) => {
+    await axiosApi.put(`transactions/${id}.json`, transaction);
+  }
+);

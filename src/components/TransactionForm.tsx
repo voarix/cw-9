@@ -1,18 +1,21 @@
 import {
-  Category,
+  Category, Transaction,
   TransactionFormMutation,
   TransactionMutation,
 } from "../types";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ButtonSpinner from "../UI/Spinner/ButtonSpinner/ButtonSpinner.tsx";
+import { useAppDispatch } from "../app/hooks.ts";
+import { fetchOneTransactionById } from "../store/transaction/transactionThunks.ts";
 
 interface Props {
   onSubmitFormToAdd: (newTran: TransactionMutation) => void;
-  // idTran?: string;
+  idTran?: string | null;
   isEdit?: boolean;
   isLoading?: boolean;
   onClose: () => void;
   categories: Category[];
+  oneTransaction?: Transaction | null;
 }
 
 const initialForm: TransactionFormMutation = {
@@ -27,8 +30,39 @@ const TransactionForm: React.FC<Props> = ({
   isLoading = false,
   onClose,
   categories,
+  idTran,
+  oneTransaction,
 }) => {
   const [form, setForm] = useState<TransactionFormMutation>(initialForm);
+  const dispatch = useAppDispatch();
+
+  const fetchOneTransaction = useCallback(
+    async (id?: string) => {
+      if (id) {
+        await dispatch(fetchOneTransactionById(id));
+      }
+    },
+    [dispatch],
+  );
+
+  useEffect(() => {
+    setForm(initialForm);
+
+    if (!oneTransaction && idTran) {
+      void fetchOneTransaction(idTran);
+    } else if (oneTransaction && idTran) {
+      const selectedCategory = categories.find(
+        (category) => category.id === oneTransaction.category,
+      );
+      if (selectedCategory) {
+        setForm({
+          type: selectedCategory.type,
+          category: selectedCategory.name,
+          amount: oneTransaction.amount,
+        });
+      }
+    }
+  }, [fetchOneTransaction, idTran, oneTransaction, categories]);
 
   const inputChangeHandler = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -49,7 +83,7 @@ const TransactionForm: React.FC<Props> = ({
         const transactionToSend = {
           category: selectedCategory.id,
           amount: Number(form.amount),
-          createdAt: new Date().toISOString(),
+          createdAt: oneTransaction?.createdAt || new Date().toISOString(),
         };
 
         onSubmitFormToAdd(transactionToSend);
@@ -109,6 +143,7 @@ const TransactionForm: React.FC<Props> = ({
                     onChange={inputChangeHandler}
                     disabled={isLoading}
                   >
+                    <option value="">Select a category</option>
                     {newCategories.map((category) => (
                       <option key={category.id} value={category.name}>
                         {category.name}

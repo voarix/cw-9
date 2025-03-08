@@ -11,7 +11,7 @@ export interface TransactionMutation {
 }
 
 export interface TransactionApi {
-  [id: string]: TransactionForm;
+  [id: string]: TransactionMutation;
 }
 
 export interface Transaction extends TransactionMutation {

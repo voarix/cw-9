@@ -4,9 +4,10 @@ import { Category, Transaction } from "../types";
 interface Props {
   transaction: Transaction;
   categories: Category[];
+  onEdit: (id: string) => void;
 }
 
-const TransactionItem: React.FC<Props> = ({ transaction, categories }) => {
+const TransactionItem: React.FC<Props> = ({ transaction, categories, onEdit }) => {
   const category = categories.find(
     (categoryItem) => categoryItem.id === transaction.category,
   );
@@ -40,7 +41,7 @@ const TransactionItem: React.FC<Props> = ({ transaction, categories }) => {
             </strong>
           </span>
           <div>
-            <button className="btn btn-primary me-3">Edit</button>
+            <button className="btn btn-primary me-3"  onClick={() => onEdit(transaction.id)}>Edit</button>
             <button className="btn btn-danger">Delete</button>
           </div>
         </div>
