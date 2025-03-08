@@ -5,9 +5,11 @@ interface Props {
   transaction: Transaction;
   categories: Category[];
   onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+  deleteLoading: boolean;
 }
 
-const TransactionItem: React.FC<Props> = ({ transaction, categories, onEdit }) => {
+const TransactionItem: React.FC<Props> = ({ transaction, categories, onEdit, onDelete, deleteLoading }) => {
   const category = categories.find(
     (categoryItem) => categoryItem.id === transaction.category,
   );
@@ -41,8 +43,8 @@ const TransactionItem: React.FC<Props> = ({ transaction, categories, onEdit }) =
             </strong>
           </span>
           <div>
-            <button className="btn btn-primary me-3"  onClick={() => onEdit(transaction.id)}>Edit</button>
-            <button className="btn btn-danger">Delete</button>
+            <button className="btn btn-primary me-3"  onClick={() => onEdit(transaction.id)} disabled={deleteLoading}>Edit</button>
+            <button className="btn btn-danger" onClick={() => onDelete(transaction.id)} disabled={deleteLoading}>Delete</button>
           </div>
         </div>
       </div>

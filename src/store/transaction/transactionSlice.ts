@@ -1,6 +1,12 @@
 import { Transaction } from "../../types";
 import { createSlice } from "@reduxjs/toolkit";
-import { addTransaction, fetchOneTransactionById, fetchTransactions, updateTransaction } from "./transactionThunks.ts";
+import {
+  addTransaction,
+  deleteTransaction,
+  fetchOneTransactionById,
+  fetchTransactions,
+  updateTransaction
+} from "./transactionThunks.ts";
 import { RootState } from "../../app/store.ts";
 
 interface TransactionState {
@@ -9,6 +15,7 @@ interface TransactionState {
   addLoading: boolean;
   fetchOneLoading: boolean;
   updateLoading: boolean;
+  deleteLoading: boolean;
   oneTransaction: Transaction | null;
 }
 
@@ -18,6 +25,7 @@ const initialState: TransactionState = {
   addLoading: false,
   fetchOneLoading: false,
   updateLoading: false,
+  deleteLoading: false,
   oneTransaction: null,
 };
 
@@ -29,6 +37,7 @@ export const selectAddLoading = (state: RootState) =>
   state.transactions.addLoading;
 export const selectFetchOneLoading = (state: RootState) => state.transactions.fetchOneLoading;
 export const selectUpdateLoading = (state: RootState) => state.transactions.updateLoading;
+export const selectDeleteLoading = (state: RootState) => state.transactions.deleteLoading;
 export const selectOneTransaction = (state: RootState) => state.transactions.oneTransaction;
 
 
@@ -85,6 +94,16 @@ const transactionSlice = createSlice({
       })
       .addCase(updateTransaction.rejected, (state) => {
         state.updateLoading = false;
+      })
+
+      .addCase(deleteTransaction.pending, (state) => {
+        state.deleteLoading = true;
+      })
+      .addCase(deleteTransaction.fulfilled, (state) => {
+        state.deleteLoading = false;
+      })
+      .addCase(deleteTransaction.rejected, (state) => {
+        state.deleteLoading = false;
       });
   },
 });

@@ -1,13 +1,13 @@
 import { useAppDispatch, useAppSelector } from "../app/hooks.ts";
 import {
   clearOneTransaction,
-  selectAddLoading,
-  selectFetchLoading, selectOneTransaction,
+  selectAddLoading, selectDeleteLoading,
+  selectFetchLoading, selectFetchOneLoading, selectOneTransaction,
   selectTransactions, selectUpdateLoading,
 } from "../store/transaction/transactionSlice.ts";
 import { useEffect, useState } from "react";
 import {
-  addTransaction,
+  addTransaction, deleteTransaction,
   fetchTransactions, updateTransaction,
 } from "../store/transaction/transactionThunks.ts";
 import Spinner from "../UI/Spinner/Spinner.tsx";
@@ -27,7 +27,8 @@ const Home = () => {
   const addLoading = useAppSelector(selectAddLoading);
   const updateLoading = useAppSelector(selectUpdateLoading);
   const oneTransaction = useAppSelector(selectOneTransaction);
-  const fetchOneLoading = useAppSelector(selectFetchLoading);
+  const fetchOneLoading = useAppSelector(selectFetchOneLoading);
+  const deleteLoading = useAppSelector(selectDeleteLoading);
 
   const [showModal, setShowModal] = useState(false);
   const [transactionId, setTransactionId] = useState<string | null>(null);
@@ -42,7 +43,11 @@ const Home = () => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const incomeArr = transactions.filter((transaction) => {
+  const newTransactions = [...transactions].sort((a, b) => {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+
+  const incomeArr = newTransactions.filter((transaction) => {
     const category = categories.find(
       (item) => item.id === transaction.category,
     );
@@ -53,7 +58,7 @@ const Home = () => {
     }
   });
 
-  const expenseArr = transactions.filter((transaction) => {
+  const expenseArr = newTransactions.filter((transaction) => {
     const category = categories.find(
       (item) => item.id === transaction.category,
     );
@@ -102,6 +107,13 @@ const Home = () => {
     setShowModal(true);
   };
 
+  const onDeleteTransaction = async (id: string) => {
+    if (window.confirm("Are you want delete this transaction?")) {
+      await dispatch(deleteTransaction(id));
+      await dispatch(fetchTransactions());
+    }
+  };
+
   return (
     <>
       <ToolBar onShowModal={onShowModal} />
@@ -117,12 +129,14 @@ const Home = () => {
               <h5>Total: {total} KGS</h5>
             </div>
 
-            {transactions.map((transaction) => (
+            {newTransactions.map((transaction) => (
               <TransactionItem
                 key={transaction.id}
                 transaction={transaction}
                 categories={categories}
                 onEdit={onEditTransaction}
+                onDelete={onDeleteTransaction}
+                deleteLoading={deleteLoading}
               />
             ))}
 

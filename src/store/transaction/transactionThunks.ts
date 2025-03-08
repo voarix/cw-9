@@ -52,3 +52,10 @@ export const updateTransaction = createAsyncThunk<void, { id: string; transactio
     await axiosApi.put(`transactions/${id}.json`, transaction);
   }
 );
+
+export const deleteTransaction = createAsyncThunk<void, string>(
+  "transactions/deleteTransaction",
+  async (id) => {
+    await axiosApi.delete(`transactions/${id}.json`);
+  }
+);
