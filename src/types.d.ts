@@ -18,15 +18,15 @@ export interface Transaction extends TransactionMutation {
   id: string;
 }
 
-export interface CategoryForm {
+export interface CategoryMutation{
   name: string;
-  type: "income" | "expense";
+  type: string;
 }
 
 export interface CategoryApi {
-  [id: string]: CategoryForm;
+  [id: string]: CategoryMutation
 }
 
-export interface Category extends CategoryForm {
+export interface Category extends CategoryMutation{
   id: string;
 }

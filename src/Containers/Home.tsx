@@ -1,21 +1,24 @@
 import { useAppDispatch, useAppSelector } from "../app/hooks.ts";
 import {
   clearOneTransaction,
-  selectAddLoading, selectDeleteLoading,
-  selectFetchLoading, selectFetchOneLoading, selectOneTransaction,
-  selectTransactions, selectUpdateLoading,
+  selectAddLoading,
+  selectDeleteLoading,
+  selectFetchLoading,
+  selectFetchOneLoading,
+  selectOneTransaction,
+  selectTransactions,
+  selectUpdateLoading,
 } from "../store/transaction/transactionSlice.ts";
 import { useEffect, useState } from "react";
 import {
-  addTransaction, deleteTransaction,
-  fetchTransactions, updateTransaction,
+  addTransaction,
+  deleteTransaction,
+  fetchTransactions,
+  updateTransaction,
 } from "../store/transaction/transactionThunks.ts";
 import Spinner from "../UI/Spinner/Spinner.tsx";
 import TransactionItem from "../components/TransactionItem.tsx";
-import {
-  selectCategories,
-  selectCategoriesLoading,
-} from "../store/categories/categoriesSlice.ts";
+import { selectCategories, selectFetchLoadingCat, } from "../store/categories/categoriesSlice.ts";
 import { fetchCategories } from "../store/categories/categoriesThunks.ts";
 import ToolBar from "../components/ToolBar.tsx";
 import { TransactionMutation } from "../types";
@@ -34,7 +37,7 @@ const Home = () => {
   const [transactionId, setTransactionId] = useState<string | null>(null);
 
   const categories = useAppSelector(selectCategories);
-  const categoryFetchLoading = useAppSelector(selectCategoriesLoading);
+  const categoryFetchLoading = useAppSelector(selectFetchLoadingCat);
 
   const dispatch = useAppDispatch();
 
