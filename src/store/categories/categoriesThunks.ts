@@ -19,5 +19,5 @@ export const fetchCategories = createAsyncThunk<Category[], void>(
         };
       });
     }
-  }
+  },
 );

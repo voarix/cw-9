@@ -14,7 +14,8 @@ const initialState: CategoriesState = {
 };
 
 export const selectCategories = (state: RootState) => state.categories.items;
-export const selectCategoriesLoading = (state: RootState) => state.categories.fetchLoading;
+export const selectCategoriesLoading = (state: RootState) =>
+  state.categories.fetchLoading;
 
 const categoriesSlice = createSlice({
   name: "categories",

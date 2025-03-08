@@ -1,4 +1,10 @@
-export interface TransactionForm {
+export interface TransactionFormMutation {
+  type: string;
+  category: string;
+  amount: number;
+}
+
+export interface TransactionMutation {
   category: string;
   amount: number;
   createdAt: string;
@@ -8,13 +14,13 @@ export interface TransactionApi {
   [id: string]: TransactionForm;
 }
 
-export interface Transaction extends TransactionForm {
+export interface Transaction extends TransactionMutation {
   id: string;
 }
 
 export interface CategoryForm {
   name: string;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
 }
 
 export interface CategoryApi {

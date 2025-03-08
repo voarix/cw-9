@@ -1,6 +1,11 @@
 import { NavLink } from "react-router-dom";
+import React from "react";
 
-const Toolbar = () => {
+interface Props {
+  onShowModal: React.MouseEventHandler;
+}
+
+const Toolbar: React.FC<Props> = ({ onShowModal }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
       <div className="container">
@@ -15,9 +20,9 @@ const Toolbar = () => {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="" className="nav-link">
+              <button className="nav-link" onClick={onShowModal}>
                 Add
-              </NavLink>
+              </button>
             </li>
           </ul>
         </div>
